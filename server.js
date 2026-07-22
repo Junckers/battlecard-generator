@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -16,12 +18,21 @@ if (!CLICKUP_API_TOKEN || !CLAUDE_API_KEY) {
   process.exit(1);
 }
 
-app.use(express.static('/app/public'));
+// Serve index.html on root
+app.get('/', (req, res) => {
+  const indexPath = path.join(__dirname, 'public', 'index.html');
+  res.sendFile(indexPath);
+});
 
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// Get competitors from ClickUp Space
 app.get('/api/competitors', async (req, res) => {
   try {
     if (!CLICKUP_SPACE_ID) {
@@ -59,6 +70,7 @@ app.get('/api/competitors', async (req, res) => {
   }
 });
 
+// Generate battlecard via Claude API
 app.post('/api/generate-battlecard', async (req, res) => {
   try {
     const { competitor, market, sport, projectType, situation } = req.body;
