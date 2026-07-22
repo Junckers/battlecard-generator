@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Battlecard Generator</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+.header {
+  background: linear-gradient(135deg, #1B3A2D 0%, #244D3C 100%);
+  color: white;
+  padding: 40px 30px;
+  text-align: center;
+}
+.header h1 { font-size: 32px; margin-bottom: 8px; }
+.header p { opacity: 0.9; font-size: 16px; }
+.content { padding: 40px 30px; }
+.form-group {
+  margin-bottom: 24px;
+}
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 14px;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+textarea { resize: vertical; min-height: 80px; }
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+button {
+  flex: 1;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-generate {
+  background: linear-gradient(135deg, #1B3A2D 0%, #244D3C 100%);
+  color: white;
+}
+.btn-generate:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(27, 58, 45, 0.3);
+}
+.btn-generate:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn-copy {
+  background: #f0f0f0;
+  color: #333;
+}
+.btn-copy:hover {
+  background: #e0e0e0;
+}
+#result {
+  margin-top: 32px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  max-height: 500px;
+  overflow-y: auto;
+  display: none;
+}
+#result.show { display: block; }
+.result-header {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e0e0e0;
+}
+.result-content {
+  background: white;
+  padding: 16px;
+  border-radius: 6px;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.error {
+  color: #d32f2f;
+  background: #ffebee;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border-left: 4px solid #d32f2f;
+}
+.success {
+  color: #2e7d32;
+  background: #e8f5e9;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border-left: 4px solid #2e7d32;
+}
+.loading {
+  text-align: center;
+  color: #667eea;
+  font-weight: 600;
+}
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f0f0f0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.info-box {
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1565c0;
+  margin-bottom: 24px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>🏆 Battlecard Generator</h1>
+    <p>Junckers vs Competitors</p>
+  </div>
+
+  <div class="content">
+    <div class="info-box">
+      💡 Fill in competitor details to generate a winning battlecard
+    </div>
+
+    <div class="form-group">
+      <label>Competitor:</label>
+      <select id="competitor">
+        <option value="">— Select a competitor —</option>
+        <option value="Boen Sport">Boen Sport</option>
+        <option value="Gerflor / Taraflex">Gerflor / Taraflex</option>
+        <option value="Tarkett Sports">Tarkett Sports</option>
+        <option value="Robbins">Robbins</option>
+        <option value="Connor Sports">Connor Sports</option>
+        <option value="KTL Floor">KTL Floor</option>
+        <option value="Dalla Riva">Dalla Riva</option>
+        <option value="ASB GlassFloor">ASB GlassFloor</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Market:</label>
+      <input type="text" id="market" value="DK" placeholder="e.g., UK, DK, DE, FR" />
+    </div>
+
+    <div class="form-group">
+      <label>Sport:</label>
+      <select id="sport">
+        <option>Basketball</option>
+        <option>Handball</option>
+        <option>Volleyball</option>
+        <option>Badminton</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Project Type:</label>
+      <select id="projectType">
+        <option>New Arena</option>
+        <option>Renovation</option>
+        <option>Upgrade</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Situation (Optional):</label>
+      <textarea id="situation" placeholder="Add any relevant context..."></textarea>
+    </div>
+
+    <div class="button-group">
+      <button class="btn-generate" onclick="generateBattlecard()">
+        Generate Battlecard
+      </button>
+    </div>
+
+    <div id="result">
+      <div class="result-header">Battlecard Result</div>
+      <div id="resultContent" class="result-content"></div>
+      <div class="button-group" style="margin-top: 16px;">
+        <button class="btn-copy" onclick="copyResult()">📋 Copy to Clipboard</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = window.location.origin;
+
+async function generateBattlecard() {
+  const competitor = document.getElementById('competitor').value;
+  const market = document.getElementById('market').value;
+  const sport = document.getElementById('sport').value;
+  const projectType = document.getElementById('projectType').value;
+  const situation = document.getElementById('situation').value;
+
+  const resultDiv = document.getElementById('result');
+  const resultContent = document.getElementById('resultContent');
+
+  if (!competitor) {
+    resultContent.innerHTML = '<div class="error">❌ Please select a competitor</div>';
+    resultDiv.classList.add('show');
+    return;
+  }
+
+  resultContent.innerHTML = '<div class="loading"><span class="spinner"></span>Generating battlecard...</div>';
+  resultDiv.classList.add('show');
+
+  try {
+    const response = await fetch(`${API_BASE}/api/generate-battlecard`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        competitor,
+        market,
+        sport,
+        projectType,
+        situation
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || `HTTP ${response.status}`);
+    }
+
+    const battlecard = await response.json();
+    resultContent.innerHTML = `<div class="success">✅ Success!</div>\n\n${JSON.stringify(battlecard, null, 2)}`;
+  } catch (err) {
+    console.error('Error:', err);
+    resultContent.innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+  }
+}
+
+function copyResult() {
+  const content = document.getElementById('resultContent').textContent;
+  navigator.clipboard.writeText(content).then(() => {
+    alert('✅ Copied to clipboard!');
+  });
+}
+
+document.getElementById('situation').addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 'Enter') {
+    generateBattlecard();
+  }
+});
+</script>
+
+</body>
+</html>
