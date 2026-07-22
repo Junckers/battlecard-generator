@@ -1,241 +1,582 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Battlecard Generator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Junckers · Battlecard Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --forest: #1B3A2D;
+  --forest-mid: #244D3C;
+  --forest-light: #2E6350;
+  --cream: #F7F4EE;
+  --cream2: #EFEBE3;
+  --cream3: #E4DDD2;
+  --ink: #1A1714;
+  --ink2: #3D3830;
+  --muted: #7A7268;
+  --muted2: #A09890;
+  --gold: #B8893A;
+  --gold-light: #E8C97A;
+  --gold-bg: #FBF4E4;
+  --gold-border: rgba(184,137,58,0.25);
+  --red: #B83A3A;
+  --red-bg: #FBE9E9;
+  --red-border: rgba(184,58,58,0.2);
+  --green: #2A6B44;
+  --green-bg: #E8F4ED;
+  --green-border: rgba(42,107,68,0.18);
+  --blue: #2A4A6B;
+  --blue-bg: #E8EEF4;
+  --border: rgba(26,23,20,0.09);
+  --border2: rgba(26,23,20,0.15);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #1E1C18;
   min-height: 100vh;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+}
+
+/* ── LAYOUT ── */
+.shell {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: var(--forest);
+  display: flex;
+  flex-direction: column;
+  padding: 32px 24px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 36px;
+}
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--gold);
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  flex-shrink: 0;
 }
-.container {
-  max-width: 800px;
-  width: 100%;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  overflow: hidden;
+.logo-mark svg { width: 18px; height: 18px; fill: var(--forest); }
+.logo-text { font-size: 14px; font-weight: 600; color: white; letter-spacing: -0.01em; }
+.logo-sub { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: .1em; text-transform: uppercase; margin-top: 1px; }
+
+.sidebar-section { margin-bottom: 28px; }
+.sidebar-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 10px;
 }
-.header {
-  background: linear-gradient(135deg, #1B3A2D 0%, #244D3C 100%);
-  color: white;
-  padding: 40px 30px;
-  text-align: center;
-}
-.header h1 { font-size: 32px; margin-bottom: 8px; }
-.header p { opacity: 0.9; font-size: 16px; }
-.content { padding: 40px 30px; }
-.form-group {
-  margin-bottom: 24px;
-}
-label {
+
+/* Form controls */
+.form-group { margin-bottom: 14px; }
+.form-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 6px;
   display: block;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #333;
-  font-size: 14px;
 }
-input, select, textarea {
+.form-select, .form-input, .form-textarea {
   width: 100%;
-  padding: 12px;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  font-size: 14px;
-  font-family: inherit;
-  transition: border-color 0.2s;
-}
-input:focus, select:focus, textarea:focus {
+  background: rgba(255,255,255,0.07);
+  border: 0.5px solid rgba(255,255,255,0.12);
+  border-radius: 7px;
+  padding: 9px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: white;
   outline: none;
-  border-color: #667eea;
+  appearance: none;
+  transition: border-color .15s, background .15s;
 }
-textarea { resize: vertical; min-height: 80px; }
-.button-group {
-  display: flex;
-  gap: 12px;
-  margin-top: 32px;
+.form-select:focus, .form-input:focus, .form-textarea:focus {
+  border-color: var(--gold);
+  background: rgba(255,255,255,0.1);
 }
-button {
-  flex: 1;
-  padding: 14px 24px;
+.form-select option { background: var(--forest); color: white; }
+.form-textarea { min-height: 88px; resize: vertical; line-height: 1.5; }
+.form-textarea::placeholder, .form-input::placeholder { color: rgba(255,255,255,0.25); }
+
+/* Generate button */
+.gen-btn {
+  width: 100%;
+  background: var(--gold);
+  color: var(--forest);
   border: none;
-  border-radius: 6px;
-  font-size: 16px;
+  border-radius: 8px;
+  padding: 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: opacity .15s, transform .1s;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
-.btn-generate {
-  background: linear-gradient(135deg, #1B3A2D 0%, #244D3C 100%);
-  color: white;
-}
-.btn-generate:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(27, 58, 45, 0.3);
-}
-.btn-generate:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-.btn-copy {
-  background: #f0f0f0;
-  color: #333;
-}
-.btn-copy:hover {
-  background: #e0e0e0;
-}
-#result {
-  margin-top: 32px;
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  max-height: 500px;
+.gen-btn:hover { opacity: .9; }
+.gen-btn:active { transform: scale(.98); }
+.gen-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+.sidebar-divider { height: 0.5px; background: rgba(255,255,255,0.08); margin: 20px 0; }
+
+/* ── MAIN ── */
+.main {
+  background: #252320;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   overflow-y: auto;
-  display: none;
 }
-#result.show { display: block; }
-.result-header {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #e0e0e0;
-}
-.result-content {
-  background: white;
-  padding: 16px;
-  border-radius: 6px;
-  font-family: 'Monaco', 'Courier New', monospace;
-  font-size: 12px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-.error {
-  color: #d32f2f;
-  background: #ffebee;
-  padding: 12px 16px;
-  border-radius: 6px;
-  border-left: 4px solid #d32f2f;
-}
-.success {
-  color: #2e7d32;
-  background: #e8f5e9;
-  padding: 12px 16px;
-  border-radius: 6px;
-  border-left: 4px solid #2e7d32;
-}
-.loading {
+
+/* Empty state */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
   text-align: center;
-  color: #667eea;
-  font-weight: 600;
+  gap: 12px;
+}
+.empty-icon {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 0.5px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+.empty-title { font-size: 16px; font-weight: 500; color: rgba(255,255,255,0.5); }
+.empty-sub { font-size: 13px; color: rgba(255,255,255,0.2); max-width: 320px; line-height: 1.55; }
+
+/* Loading state */
+.loading-state {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 48px;
 }
 .spinner {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 3px solid #f0f0f0;
-  border-top-color: #667eea;
+  width: 40px; height: 40px;
+  border: 2px solid rgba(255,255,255,0.08);
+  border-top-color: var(--gold);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-right: 8px;
-  vertical-align: middle;
+  animation: spin 0.8s linear infinite;
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: .06em;
 }
-.info-box {
-  background: #e3f2fd;
-  border-left: 4px solid #2196f3;
-  padding: 12px 16px;
+
+/* Card wrapper */
+.card-wrapper {
+  display: none;
+  padding: 32px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── BATTLECARD ── */
+.battlecard {
+  background: var(--cream);
   border-radius: 6px;
-  font-size: 14px;
-  color: #1565c0;
-  margin-bottom: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3);
+}
+
+/* Header */
+.bc-header {
+  background: var(--forest);
+  padding: 24px 28px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.bc-header::before {
+  content: '';
+  position: absolute;
+  right: -20px; top: -60px;
+  width: 300px; height: 300px;
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.bc-header::after {
+  content: '';
+  position: absolute;
+  right: 60px; top: -100px;
+  width: 300px; height: 300px;
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.bc-header-inner { position: relative; z-index: 1; }
+.bc-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 8px;
+}
+.bc-vs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.bc-brand-j { font-size: 22px; font-weight: 600; color: var(--gold-light); letter-spacing: -0.02em; }
+.bc-vs-div { font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.2); }
+.bc-brand-c { font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.65); letter-spacing: -0.02em; }
+.bc-tagline { font-size: 13px; color: rgba(255,255,255,0.5); font-style: italic; font-weight: 300; line-height: 1.5; max-width: 520px; margin-bottom: 14px; }
+.bc-meta {
+  display: flex;
+  gap: 24px;
+  padding-top: 14px;
+  border-top: 0.5px solid rgba(255,255,255,0.07);
+  flex-wrap: wrap;
+}
+.bc-meta-item { display: flex; flex-direction: column; gap: 3px; }
+.bc-meta-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+.bc-meta-val { font-size: 12px; color: rgba(255,255,255,0.65); }
+.threat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .05em;
+  font-weight: 500;
+}
+.threat-high { background: rgba(184,58,58,0.2); color: #F09090; border: 0.5px solid rgba(184,58,58,0.3); }
+.threat-medium { background: rgba(184,137,58,0.2); color: #E8C97A; border: 0.5px solid rgba(184,137,58,0.3); }
+.threat-low { background: rgba(42,107,68,0.3); color: #7BC49A; border: 0.5px solid rgba(42,107,68,0.35); }
+
+/* Spec strip */
+.bc-specs {
+  background: var(--forest-mid);
+  padding: 0 28px;
+}
+.bc-spec-hdr {
+  display: grid;
+  grid-template-columns: 150px 1fr 1fr;
+  background: rgba(0,0,0,0.15);
+}
+.bc-spec-hdr-cell {
+  padding: 7px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.bc-spec-hdr-cell.j { color: var(--gold-light); }
+.bc-spec-hdr-cell.c { color: rgba(255,255,255,0.35); }
+.bc-spec-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 1fr;
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+}
+.bc-spec-row:last-child { border-bottom: none; }
+.bc-spec-lbl { padding: 9px 0; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: rgba(255,255,255,0.28); display: flex; align-items: center; }
+.bc-spec-j { padding: 9px 14px; font-size: 12px; font-weight: 500; color: var(--gold-light); border-left: 0.5px solid rgba(255,255,255,0.06); display: flex; align-items: center; }
+.bc-spec-c { padding: 9px 14px; font-size: 12px; color: rgba(255,255,255,0.45); border-left: 0.5px solid rgba(255,255,255,0.06); display: flex; align-items: center; }
+.bc-spec-c.win-for-us { color: #F09090; }
+
+/* Body grid */
+.bc-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.bc-col { padding: 22px 24px; }
+.bc-col-left { border-right: 0.5px solid var(--border); }
+.bc-col-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.bc-col-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* Win items */
+.bc-win-list { display: flex; flex-direction: column; gap: 9px; }
+.bc-win {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: var(--green-bg);
+  border: 0.5px solid var(--green-border);
+  border-radius: 7px;
+  padding: 10px 12px;
+}
+.bc-win-icon { width: 17px; height: 17px; border-radius: 50%; background: var(--green); color: white; font-size: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.bc-win-body { font-size: 12.5px; color: var(--ink2); line-height: 1.45; }
+.bc-win-body strong { color: var(--green); font-weight: 500; }
+
+/* Objection items */
+.bc-obj-list { display: flex; flex-direction: column; gap: 9px; }
+.bc-obj {
+  background: white;
+  border: 0.5px solid var(--border2);
+  border-radius: 7px;
+  padding: 11px 13px;
+}
+.bc-obj-q { font-size: 12px; font-weight: 500; color: var(--ink); margin-bottom: 5px; display: flex; align-items: flex-start; gap: 6px; }
+.bc-obj-tag { font-family: 'DM Mono', monospace; font-size: 9px; padding: 2px 6px; border-radius: 3px; background: var(--gold-bg); border: 0.5px solid var(--gold-border); color: var(--gold); white-space: nowrap; flex-shrink: 0; margin-top: 1px; letter-spacing: .04em; }
+.bc-obj-a { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.bc-obj-a strong { color: var(--ink2); font-weight: 500; }
+
+/* Certs */
+.bc-certs {
+  grid-column: 1 / -1;
+  border-top: 0.5px solid var(--border);
+  background: var(--cream2);
+  padding: 18px 24px;
+}
+.bc-certs-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.bc-cert-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 7px; }
+.bc-cert {
+  background: white;
+  border: 0.5px solid var(--border2);
+  border-radius: 7px;
+  padding: 9px 11px;
+}
+.bc-cert-name { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--ink); margin-bottom: 5px; }
+.bc-cert-row { display: flex; flex-direction: column; gap: 2px; }
+.bc-cert-j { font-size: 10px; font-weight: 500; }
+.bc-cert-c { font-size: 10px; }
+.cert-yes-j { color: var(--green); }
+.cert-no-j { color: var(--cream3); }
+.cert-yes-c { color: var(--muted); }
+.cert-no-c { color: var(--cream3); }
+
+/* Close bar */
+.bc-close {
+  grid-column: 1 / -1;
+  background: var(--forest);
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.bc-close-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,0.28); margin-bottom: 5px; }
+.bc-close-text { font-size: 13px; color: rgba(255,255,255,0.75); font-style: italic; font-weight: 300; max-width: 480px; line-height: 1.5; }
+.bc-close-text strong { color: var(--gold-light); font-weight: 500; font-style: normal; }
+.bc-proof-pills { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+.bc-proof { font-family: 'DM Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 4px; background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); letter-spacing: .04em; }
+
+/* Footer */
+.bc-footer {
+  grid-column: 1 / -1;
+  padding: 9px 24px;
+  border-top: 0.5px solid var(--border);
+  background: var(--cream2);
+  display: flex;
+  justify-content: space-between;
+}
+.bc-footer-note { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted2); letter-spacing: .05em; text-transform: uppercase; }
+
+/* Actions bar */
+.actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.actions-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.action-btns { display: flex; gap: 8px; }
+.action-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 0.5px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: all .12s;
+  letter-spacing: .04em;
+}
+.action-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); border-color: rgba(255,255,255,0.25); }
+
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; }
+  .bc-body { grid-template-columns: 1fr; }
+  .bc-col-left { border-right: none; border-bottom: 0.5px solid var(--border); }
+  .card-wrapper { padding: 16px; }
 }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="header">
-    <h1>🏆 Battlecard Generator</h1>
-    <p>Junckers vs Competitors</p>
-  </div>
+<div class="shell">
 
-  <div class="content">
-    <div class="info-box">
-      💡 Fill in competitor details to generate a winning battlecard
-    </div>
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
 
-    <div class="form-group">
-      <label>Competitor:</label>
-      <select id="competitor">
-        <option value="">— Select a competitor —</option>
-        <option value="Boen Sport">Boen Sport</option>
-        <option value="Gerflor / Taraflex">Gerflor / Taraflex</option>
-        <option value="Tarkett Sports">Tarkett Sports</option>
-        <option value="Robbins">Robbins</option>
-        <option value="Connor Sports">Connor Sports</option>
-        <option value="KTL Floor">KTL Floor</option>
-        <option value="Dalla Riva">Dalla Riva</option>
-        <option value="ASB GlassFloor">ASB GlassFloor</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Market:</label>
-      <input type="text" id="market" value="DK" placeholder="e.g., UK, DK, DE, FR" />
-    </div>
-
-    <div class="form-group">
-      <label>Sport:</label>
-      <select id="sport">
-        <option>Basketball</option>
-        <option>Handball</option>
-        <option>Volleyball</option>
-        <option>Badminton</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Project Type:</label>
-      <select id="projectType">
-        <option>New Arena</option>
-        <option>Renovation</option>
-        <option>Upgrade</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Situation (Optional):</label>
-      <textarea id="situation" placeholder="Add any relevant context..."></textarea>
-    </div>
-
-    <div class="button-group">
-      <button class="btn-generate" onclick="generateBattlecard()">
-        Generate Battlecard
-      </button>
-    </div>
-
-    <div id="result">
-      <div class="result-header">Battlecard Result</div>
-      <div id="resultContent" class="result-content"></div>
-      <div class="button-group" style="margin-top: 16px;">
-        <button class="btn-copy" onclick="copyResult()">📋 Copy to Clipboard</button>
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="8" width="16" height="2" rx="1"/>
+          <rect x="1" y="3" width="16" height="2" rx="1"/>
+          <rect x="1" y="13" width="16" height="2" rx="1"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-text">Junckers</div>
+        <div class="logo-sub">Battlecard Generator</div>
       </div>
     </div>
-  </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Competitor</div>
+      <div class="form-group">
+        <select class="form-select" id="competitor">
+          <option value="">— Select competitor —</option>
+          <option value="KTL / Oscon">KTL / Oscon</option>
+          <option value="Robbins Sports Surfaces">Robbins Sports Surfaces</option>
+          <option value="Tarkett Sports">Tarkett Sports</option>
+          <option value="Boen Sport">Boen Sport</option>
+          <option value="Gerflor / Taraflex">Gerflor / Taraflex</option>
+          <option value="Connor Sports">Connor Sports</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Market</div>
+      <div class="form-group">
+        <select class="form-select" id="market">
+          <option value="DK">DK — Denmark</option>
+          <option value="UK">UK — United Kingdom</option>
+          <option value="DE">DE — Germany</option>
+          <option value="FR">FR — France</option>
+          <option value="SE">SE — Sweden</option>
+          <option value="NO">NO — Norway</option>
+          <option value="Export">Global Export</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Primary sport</div>
+      <div class="form-group">
+        <select class="form-select" id="sport">
+          <option value="Basketball">Basketball</option>
+          <option value="Handball">Handball</option>
+          <option value="Volleyball">Volleyball</option>
+          <option value="Badminton">Badminton</option>
+          <option value="Multisport">Multisport</option>
+          <option value="Athletics">Athletics / Dance</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Project type</div>
+      <div class="form-group">
+        <select class="form-select" id="projectType">
+          <option value="new arena">New arena build</option>
+          <option value="renovation">Renovation / replacement</option>
+          <option value="multisport hall">Multisport hall</option>
+          <option value="school sports hall">School sports hall</option>
+          <option value="portable court">Portable basketball court</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Situation (optional)</div>
+      <div class="form-group">
+        <textarea class="form-textarea" id="situation" placeholder="E.g. 'Customer is price-sensitive. They need FIBA Level 1 minimum.'"></textarea>
+      </div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <button class="gen-btn" id="gen-btn" onclick="generateBattlecard()">
+      <span>⚡</span>
+      <span id="gen-label">Generate Battlecard</span>
+    </button>
+
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main" id="main">
+
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">🏆</div>
+      <div class="empty-title">Ready to generate</div>
+      <div class="empty-sub">Select a competitor and context, then click Generate. Your battlecard appears here in seconds.</div>
+    </div>
+
+    <div class="loading-state" id="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Generating battlecard…</div>
+    </div>
+
+    <div class="card-wrapper" id="card-wrapper">
+      <div class="actions-bar">
+        <span class="actions-label">Generated battlecard</span>
+        <div class="action-btns">
+          <button class="action-btn" onclick="window.print()">Print / PDF</button>
+          <button class="action-btn" onclick="resetBattlecard()">← New card</button>
+        </div>
+      </div>
+      <div id="battlecard-container"></div>
+    </div>
+
+  </main>
 </div>
 
 <script>
-const API_BASE = window.location.origin;
-
 async function generateBattlecard() {
   const competitor = document.getElementById('competitor').value;
   const market = document.getElementById('market').value;
@@ -243,24 +584,21 @@ async function generateBattlecard() {
   const projectType = document.getElementById('projectType').value;
   const situation = document.getElementById('situation').value;
 
-  const resultDiv = document.getElementById('result');
-  const resultContent = document.getElementById('resultContent');
-
   if (!competitor) {
-    resultContent.innerHTML = '<div class="error">❌ Please select a competitor</div>';
-    resultDiv.classList.add('show');
+    alert('Please select a competitor');
     return;
   }
 
-  resultContent.innerHTML = '<div class="loading"><span class="spinner"></span>Generating battlecard...</div>';
-  resultDiv.classList.add('show');
+  // Show loading
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('loading-state').style.display = 'flex';
+  document.getElementById('card-wrapper').style.display = 'none';
+  document.getElementById('gen-btn').disabled = true;
 
   try {
-    const response = await fetch(`${API_BASE}/api/generate-battlecard`, {
+    const response = await fetch('/api/generate-battlecard', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         competitor,
         market,
@@ -271,30 +609,32 @@ async function generateBattlecard() {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || `HTTP ${response.status}`);
+      const text = await response.text();
+      throw new Error(`Server error: ${response.status}`);
     }
 
-    const battlecard = await response.json();
-    resultContent.innerHTML = `<div class="success">✅ Success!</div>\n\n${JSON.stringify(battlecard, null, 2)}`;
-  } catch (err) {
-    console.error('Error:', err);
-    resultContent.innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+    const html = await response.text();
+
+    // Display the HTML
+    document.getElementById('battlecard-container').innerHTML = html;
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('card-wrapper').style.display = 'flex';
+    document.getElementById('card-wrapper').scrollIntoView({ behavior: 'smooth' });
+
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error generating battlecard: ' + error.message);
+    document.getElementById('empty-state').style.display = 'flex';
+    document.getElementById('loading-state').style.display = 'none';
+  } finally {
+    document.getElementById('gen-btn').disabled = false;
   }
 }
 
-function copyResult() {
-  const content = document.getElementById('resultContent').textContent;
-  navigator.clipboard.writeText(content).then(() => {
-    alert('✅ Copied to clipboard!');
-  });
+function resetBattlecard() {
+  document.getElementById('card-wrapper').style.display = 'none';
+  document.getElementById('empty-state').style.display = 'flex';
 }
-
-document.getElementById('situation').addEventListener('keydown', (e) => {
-  if (e.ctrlKey && e.key === 'Enter') {
-    generateBattlecard();
-  }
-});
 </script>
 
 </body>
