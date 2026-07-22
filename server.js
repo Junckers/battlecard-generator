@@ -16,7 +16,7 @@ if (!CLICKUP_API_TOKEN || !CLAUDE_API_KEY) {
   process.exit(1);
 }
 
-app.use(express.static('public'));
+app.use(express.static('/app/public'));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
